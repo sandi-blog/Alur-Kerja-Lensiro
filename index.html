@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Alur Kerja Pesanan — Optik Lensiro</title>
+  <title>Alur Penjualan Order — Lensiro Max</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -45,7 +48,7 @@
       --node-active-fill: #EFF6FF;
       --node-active-stroke: #2563EB;
       --node-active-text: #1E3A8A;
-      
+
       --edge-default: #94A3B8;
       --grid-dot: #CBD5E1;
       --header-bg: rgba(255, 255, 255, 0.85);
@@ -86,8 +89,17 @@
       --header-bg: rgba(19, 30, 53, 0.85);
     }
 
-    * { box-sizing: border-box; }
-    html, body { height: 100%; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
       background: var(--bg-main);
       color: var(--text-main);
@@ -132,7 +144,11 @@
       box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
       flex-shrink: 0;
     }
-    .logo-badge svg { width: 22px; height: 22px; }
+
+    .logo-badge svg {
+      width: 22px;
+      height: 22px;
+    }
 
     .brand-text h1 {
       font-family: var(--font-heading);
@@ -144,6 +160,7 @@
       align-items: center;
       gap: 8px;
     }
+
     .brand-text h1 .pill-tag {
       font-size: 10px;
       font-weight: 700;
@@ -155,6 +172,7 @@
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
+
     .brand-text p {
       font-size: 12px;
       color: var(--text-muted);
@@ -170,6 +188,7 @@
       border-radius: 999px;
       border: 1px solid var(--border-subtle);
     }
+
     .filter-btn {
       background: transparent;
       border: none;
@@ -182,13 +201,15 @@
       cursor: pointer;
       transition: all 0.2s;
     }
+
     .filter-btn:hover {
       color: var(--text-main);
     }
+
     .filter-btn.active {
       background: var(--bg-card);
       color: var(--primary);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
     }
 
     /* Action Buttons */
@@ -213,10 +234,12 @@
       background: var(--bg-card);
       color: var(--text-main);
     }
+
     .btn:hover {
       background: var(--bg-card-subtle);
       border-color: var(--border-hover);
     }
+
     .btn-icon {
       padding: 7px 8px;
       border-radius: 8px;
@@ -237,8 +260,14 @@
         grid-template-rows: minmax(0, 1fr) auto;
         overflow-y: auto;
       }
-      body { overflow: auto; }
-      .filter-pills { display: none; }
+
+      body {
+        overflow: auto;
+      }
+
+      .filter-pills {
+        display: none;
+      }
     }
 
     /* DIAGRAM CANVAS AREA */
@@ -270,7 +299,10 @@
       justify-content: center;
       cursor: grab;
     }
-    .board-svg-wrapper:active { cursor: grabbing; }
+
+    .board-svg-wrapper:active {
+      cursor: grabbing;
+    }
 
     #board-svg {
       display: block;
@@ -294,9 +326,10 @@
       border: 1px solid var(--border-subtle);
       border-radius: 10px;
       padding: 4px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
       z-index: 10;
     }
+
     .floating-btn {
       background: transparent;
       border: none;
@@ -310,11 +343,16 @@
       cursor: pointer;
       transition: all 0.15s;
     }
+
     .floating-btn:hover {
       background: var(--bg-card-subtle);
       color: var(--text-main);
     }
-    .floating-btn svg { width: 16px; height: 16px; }
+
+    .floating-btn svg {
+      width: 16px;
+      height: 16px;
+    }
 
     /* SVG NODES & EDGES STYLING */
     .n {
@@ -323,13 +361,17 @@
       transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
       transform-origin: center;
     }
-    .n rect, .n ellipse, .n polygon {
+
+    .n rect,
+    .n ellipse,
+    .n polygon {
       fill: var(--node-fill);
       stroke: var(--node-stroke);
       stroke-width: 1.6;
       filter: drop-shadow(0 3px 6px var(--node-shadow));
       transition: all 0.2s ease;
     }
+
     .n text {
       fill: var(--node-text);
       font-family: var(--font-body);
@@ -342,32 +384,41 @@
       transition: fill 0.2s ease;
     }
 
-    .n:hover rect, .n:hover ellipse, .n:hover polygon {
+    .n:hover rect,
+    .n:hover ellipse,
+    .n:hover polygon {
       stroke: var(--primary);
       stroke-width: 2;
       filter: drop-shadow(0 6px 14px rgba(37, 99, 235, 0.2));
     }
+
     .n:hover text {
       fill: var(--primary);
     }
 
     /* Selected / Active Node */
-    .n.on rect, .n.on ellipse, .n.on polygon {
+    .n.on rect,
+    .n.on ellipse,
+    .n.on polygon {
       fill: var(--node-active-fill);
       stroke: var(--node-active-stroke);
       stroke-width: 2.5;
       filter: drop-shadow(0 8px 20px rgba(37, 99, 235, 0.3));
     }
+
     .n.on text {
       fill: var(--node-active-text);
       font-weight: 700;
     }
 
     /* Near Nodes (Connected Neighbors) */
-    .n.near rect, .n.near ellipse, .n.near polygon {
+    .n.near rect,
+    .n.near ellipse,
+    .n.near polygon {
       stroke: var(--primary);
       stroke-width: 2;
     }
+
     .n.near text {
       fill: var(--text-main);
     }
@@ -377,9 +428,11 @@
       opacity: 0.35;
       filter: grayscale(0.6);
     }
+
     .focus .e:not(.on) {
       opacity: 0.12;
     }
+
     .focus .lbl:not(.on) {
       opacity: 0.15;
     }
@@ -394,11 +447,26 @@
     }
 
     /* Edge Types & Colors */
-    .e, .lbl { --c: var(--color-flow); }
-    .yes { --c: var(--color-good); }
-    .no { --c: var(--color-bad); }
-    .wait { --c: var(--color-wait); }
-    .notif { --c: var(--color-notif); }
+    .e,
+    .lbl {
+      --c: var(--color-flow);
+    }
+
+    .yes {
+      --c: var(--color-good);
+    }
+
+    .no {
+      --c: var(--color-bad);
+    }
+
+    .wait {
+      --c: var(--color-wait);
+    }
+
+    .notif {
+      --c: var(--color-notif);
+    }
 
     /* Moving Arrow Flow Animation */
     .e.on {
@@ -409,18 +477,44 @@
       animation: flowPath 0.65s linear infinite;
     }
 
-    .e.on.yes { marker-end: url(#a-yes); }
-    .e.on.no { marker-end: url(#a-no); stroke-dasharray: 6 5; animation: flowPathDash 0.5s linear infinite; }
-    .e.on.wait { marker-end: url(#a-wait); stroke-dasharray: 6 5; animation: flowPathDash 0.5s linear infinite; }
-    .e.on.notif { marker-end: url(#a-notif); }
+    .e.on.yes {
+      marker-end: url(#a-yes);
+    }
+
+    .e.on.no {
+      marker-end: url(#a-no);
+      stroke-dasharray: 6 5;
+      animation: flowPathDash 0.5s linear infinite;
+    }
+
+    .e.on.wait {
+      marker-end: url(#a-wait);
+      stroke-dasharray: 6 5;
+      animation: flowPathDash 0.5s linear infinite;
+    }
+
+    .e.on.notif {
+      marker-end: url(#a-notif);
+    }
 
     @keyframes flowPath {
-      from { stroke-dashoffset: 28; }
-      to { stroke-dashoffset: 0; }
+      from {
+        stroke-dashoffset: 28;
+      }
+
+      to {
+        stroke-dashoffset: 0;
+      }
     }
+
     @keyframes flowPathDash {
-      from { stroke-dashoffset: 22; }
-      to { stroke-dashoffset: 0; }
+      from {
+        stroke-dashoffset: 22;
+      }
+
+      to {
+        stroke-dashoffset: 0;
+      }
     }
 
     /* Edge Labels */
@@ -432,10 +526,11 @@
       letter-spacing: 0.06em;
       transition: all 0.2s ease;
     }
+
     .lbl.on {
       fill: var(--c);
       font-size: 11.5px;
-      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
     }
 
     /* SIDEBAR / DETAIL PANEL */
@@ -467,6 +562,7 @@
       overflow: hidden;
       transition: all 0.3s ease;
     }
+
     .step-card::before {
       content: '';
       position: absolute;
@@ -484,6 +580,7 @@
       gap: 8px;
       margin-bottom: 10px;
     }
+
     .step-badge {
       font-size: 11px;
       font-weight: 700;
@@ -494,6 +591,7 @@
       background: var(--primary-light);
       color: var(--primary);
     }
+
     .step-pic {
       font-size: 11.5px;
       font-weight: 600;
@@ -525,6 +623,7 @@
       flex-direction: column;
       gap: 12px;
     }
+
     .conn-heading {
       font-size: 11px;
       font-weight: 700;
@@ -557,17 +656,20 @@
       color: var(--text-main);
       transition: all 0.15s ease;
     }
+
     .conn-item:hover {
       background: var(--bg-card);
       border-color: var(--primary-border);
       transform: translateX(3px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
     }
+
     .conn-item-left {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
     .conn-indicator {
       width: 10px;
       height: 10px;
@@ -575,6 +677,7 @@
       background: var(--c);
       flex-shrink: 0;
     }
+
     .conn-badge {
       font-size: 10.5px;
       font-weight: 700;
@@ -595,6 +698,7 @@
       gap: 8px;
       margin-top: auto;
     }
+
     .legend-title {
       font-size: 11px;
       font-weight: 700;
@@ -603,11 +707,13 @@
       color: var(--text-dim);
       margin-bottom: 2px;
     }
+
     .legend-grid {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
+
     .legend-item {
       display: flex;
       align-items: center;
@@ -615,6 +721,7 @@
       font-size: 12px;
       color: var(--text-muted);
     }
+
     .legend-line {
       width: 20px;
       height: 0;
@@ -622,6 +729,7 @@
       border-radius: 2px;
       flex-shrink: 0;
     }
+
     .legend-line.dash {
       border-top-style: dashed;
     }
@@ -632,12 +740,14 @@
       padding: 30px 10px;
       color: var(--text-muted);
     }
+
     .empty-prompt svg {
       width: 44px;
       height: 44px;
       color: var(--text-dim);
       margin-bottom: 12px;
     }
+
     .empty-prompt h3 {
       font-family: var(--font-heading);
       font-size: 16px;
@@ -645,6 +755,7 @@
       color: var(--text-main);
       margin: 0 0 6px;
     }
+
     .empty-prompt p {
       font-size: 13px;
       line-height: 1.5;
@@ -652,18 +763,29 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .n *, .e, .lbl { transition: none !important; animation: none !important; }
-      .e.on { animation: none !important; }
+
+      .n *,
+      .e,
+      .lbl {
+        transition: none !important;
+        animation: none !important;
+      }
+
+      .e.on {
+        animation: none !important;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <!-- HEADER -->
   <header class="app-header">
     <div class="brand-group">
       <div class="logo-badge" title="Optik Lensiro">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
           <circle cx="6" cy="15" r="4"></circle>
           <circle cx="18" cy="15" r="4"></circle>
           <path d="M10 15h4"></path>
@@ -673,7 +795,7 @@
         </svg>
       </div>
       <div class="brand-text">
-        <h1>Optik Lensiro <span class="pill-tag">v2.0 Interactive</span></h1>
+        <h1>PT Lensiro Digital Solusi <span class="pill-tag">v.Beta</span></h1>
         <p>Diagram Visualisasi Alur Kerja Pesanan Kacamata</p>
       </div>
     </div>
@@ -690,7 +812,8 @@
     <!-- Header Actions -->
     <div class="header-actions">
       <button class="btn btn-icon" id="btn-theme" title="Ganti Mode Gelap / Terang">
-        <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
         </svg>
       </button>
@@ -699,7 +822,7 @@
 
   <!-- MAIN WRAPPER -->
   <main class="app-main">
-    
+
     <!-- CANVAS BOARD -->
     <div class="canvas-container" id="canvas-container">
       <div class="canvas-grid-bg"></div>
@@ -708,54 +831,57 @@
         <svg id="board-svg" viewBox="70 10 1300 895" role="img" aria-label="Diagram alur kerja pesanan Optik Lensiro">
           <defs>
             <!-- Arrow Markers -->
-            <marker id="a-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
-              <path d="M0,1.5 L8,5 L0,8.5 z" fill="var(--edge-default)"/>
+            <marker id="a-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5"
+              orient="auto">
+              <path d="M0,1.5 L8,5 L0,8.5 z" fill="var(--edge-default)" />
             </marker>
             <marker id="a-flow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-              <path d="M0,1 L9,5 L0,9 z" fill="var(--color-flow)"/>
+              <path d="M0,1 L9,5 L0,9 z" fill="var(--color-flow)" />
             </marker>
             <marker id="a-yes" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-              <path d="M0,1 L9,5 L0,9 z" fill="var(--color-good)"/>
+              <path d="M0,1 L9,5 L0,9 z" fill="var(--color-good)" />
             </marker>
             <marker id="a-no" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-              <path d="M0,1 L9,5 L0,9 z" fill="var(--color-bad)"/>
+              <path d="M0,1 L9,5 L0,9 z" fill="var(--color-bad)" />
             </marker>
             <marker id="a-wait" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-              <path d="M0,1 L9,5 L0,9 z" fill="var(--color-wait)"/>
+              <path d="M0,1 L9,5 L0,9 z" fill="var(--color-wait)" />
             </marker>
             <marker id="a-notif" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
-              <path d="M0,1 L9,5 L0,9 z" fill="var(--color-notif)"/>
+              <path d="M0,1 L9,5 L0,9 z" fill="var(--color-notif)" />
             </marker>
           </defs>
 
           <!-- Flow Edges (Paths) -->
           <g id="edges">
-            <path class="e" data-f="kasir" data-t="po" d="M380,74 V106"/>
-            <path class="e" data-f="po" data-t="ps" data-l="l-minta" d="M380,152 V199"/>
-            <path class="e yes" data-f="po" data-t="bf" data-l="l-ready" d="M465,129 H1345 V465 H1325"/>
-            <path class="e" data-f="ps" data-t="ag" d="M380,249 V296"/>
-            <path class="e" data-f="ag" data-t="ap" d="M432,330 H488"/>
-            <path class="e" data-f="ap" data-t="sa" d="M630,330 H718"/>
-            <path class="e wait" data-f="sa" data-t="pb" data-l="l-kosong" d="M790,272 V222"/>
-            <path class="e" data-f="pb" data-t="ms" data-l="l-dikirim" d="M870,190 H1050 V298"/>
-            <path class="e yes" data-f="sa" data-t="ms" data-l="l-ada" d="M860,330 H973"/>
-            <path class="e" data-f="ms" data-t="dt" d="M1125,330 H1173"/>
-            <path class="e" data-f="dt" data-t="bf" d="M1250,360 V433"/>
-            <path class="e" data-f="bf" data-t="qa" d="M1175,465 H1107"/>
-            <path class="e" data-f="qa" data-t="ll" d="M955,465 H870"/>
-            <path class="e yes" data-f="ll" data-t="uf" data-l="l-lulus" d="M732,465 H657"/>
-            <path class="e no" data-f="ll" data-t="bf" data-from-only data-l="l-gagal l-ulangi" d="M800,523 V565 H1250 V497"/>
-            <path class="e no" data-f="ll" data-t="gr" data-from-only data-l="l-gagal l-mutasi-rusak" d="M800,523 V565 H1030 V620"/>
-            <path class="e notif" data-f="uf" data-t="wa" data-l="l-kirim l-notif" d="M505,465 H427"/>
-            <path class="e notif" data-f="wa" data-t="cu" d="M295,465 H204"/>
-            <path class="e" data-f="uf" data-t="py" d="M580,497 V569"/>
-            <path class="e" data-f="py" data-t="ku" d="M505,595 H442"/>
-            <path class="e notif" data-f="ku" data-t="wa" d="M380,571 V494"/>
-            <path class="e" data-f="py" data-t="ln" d="M580,619 V668"/>
-            <path class="e wait" data-f="ln" data-t="py" data-from-only data-l="l-belum" d="M642,725 H710 V595 H657"/>
-            <path class="e yes" data-f="ln" data-t="ab" data-l="l-lunas" d="M580,780 V839"/>
-            <path class="e" data-f="ab" data-t="is" d="M510,865 H442"/>
-            <path class="e notif" data-f="is" data-t="wa" d="M320,865 C240,865 235,570 322,495"/>
+            <path class="e" data-f="kasir" data-t="po" d="M380,74 V106" />
+            <path class="e" data-f="po" data-t="ps" data-l="l-minta" d="M380,152 V199" />
+            <path class="e yes" data-f="po" data-t="bf" data-l="l-ready" d="M465,129 H1345 V465 H1325" />
+            <path class="e" data-f="ps" data-t="ag" d="M380,249 V296" />
+            <path class="e" data-f="ag" data-t="ap" d="M432,330 H488" />
+            <path class="e" data-f="ap" data-t="sa" d="M630,330 H718" />
+            <path class="e wait" data-f="sa" data-t="pb" data-l="l-kosong" d="M790,272 V222" />
+            <path class="e" data-f="pb" data-t="ms" data-l="l-dikirim" d="M870,190 H1050 V298" />
+            <path class="e yes" data-f="sa" data-t="ms" data-l="l-ada" d="M860,330 H973" />
+            <path class="e" data-f="ms" data-t="dt" d="M1125,330 H1173" />
+            <path class="e" data-f="dt" data-t="bf" d="M1250,360 V433" />
+            <path class="e" data-f="bf" data-t="qa" d="M1175,465 H1107" />
+            <path class="e" data-f="qa" data-t="ll" d="M955,465 H870" />
+            <path class="e yes" data-f="ll" data-t="uf" data-l="l-lulus" d="M732,465 H657" />
+            <path class="e no" data-f="ll" data-t="bf" data-from-only data-l="l-gagal l-ulangi"
+              d="M800,523 V565 H1250 V497" />
+            <path class="e no" data-f="ll" data-t="gr" data-from-only data-l="l-gagal l-mutasi-rusak"
+              d="M800,523 V565 H1030 V620" />
+            <path class="e notif" data-f="uf" data-t="wa" data-l="l-kirim l-notif" d="M505,465 H427" />
+            <path class="e notif" data-f="wa" data-t="cu" d="M295,465 H204" />
+            <path class="e" data-f="uf" data-t="py" d="M580,497 V569" />
+            <path class="e" data-f="py" data-t="ku" d="M505,595 H442" />
+            <path class="e notif" data-f="ku" data-t="wa" d="M380,571 V494" />
+            <path class="e" data-f="py" data-t="ln" d="M580,619 V668" />
+            <path class="e wait" data-f="ln" data-t="py" data-from-only data-l="l-belum" d="M642,725 H710 V595 H657" />
+            <path class="e yes" data-f="ln" data-t="ab" data-l="l-lunas" d="M580,780 V839" />
+            <path class="e" data-f="ab" data-t="is" d="M510,865 H442" />
+            <path class="e notif" data-f="is" data-t="wa" d="M320,865 C240,865 235,570 322,495" />
           </g>
 
           <!-- Branch Condition Labels -->
@@ -779,64 +905,64 @@
           <g id="nodes">
             <!-- Kasir & Order -->
             <g class="n" id="kasir" data-category="frontoffice">
-              <rect x="330" y="26" width="100" height="48" rx="24" ry="24"/>
+              <rect x="330" y="26" width="100" height="48" rx="24" ry="24" />
               <text x="380" y="51">KASIR</text>
             </g>
             <g class="n" id="po" data-category="frontoffice">
-              <rect x="295" y="106" width="170" height="46" rx="10" ry="10"/>
+              <rect x="295" y="106" width="170" height="46" rx="10" ry="10" />
               <text x="380" y="130">PENJUALAN ORDER</text>
             </g>
             <g class="n" id="ps" data-category="gudang">
-              <rect x="295" y="199" width="170" height="50" rx="10" ry="10"/>
+              <rect x="295" y="199" width="170" height="50" rx="10" ry="10" />
               <text x="380" y="225">PERMINTAAN STOK</text>
             </g>
             <g class="n" id="ag" data-category="gudang">
-              <rect x="325" y="296" width="110" height="68" rx="34" ry="34"/>
+              <rect x="325" y="296" width="110" height="68" rx="34" ry="34" />
               <text x="380" y="322">ADMIN</text>
               <text x="380" y="340">GUDANG</text>
             </g>
             <g class="n" id="ap" data-category="gudang">
-              <polygon points="560,272 630,330 560,388 490,330"/>
+              <polygon points="560,272 630,330 560,388 490,330" />
               <text x="560" y="331">APPROVED</text>
             </g>
             <g class="n" id="sa" data-category="gudang">
-              <polygon points="790,272 860,330 790,388 720,330"/>
+              <polygon points="790,272 860,330 790,388 720,330" />
               <text x="790" y="322">STOK</text>
               <text x="790" y="340">ADA ?</text>
             </g>
             <g class="n" id="pb" data-category="gudang">
-              <rect x="705" y="160" width="170" height="62" rx="10" ry="10"/>
+              <rect x="705" y="160" width="170" height="62" rx="10" ry="10" />
               <text x="790" y="192">PEMBELIAN ORDER</text>
             </g>
             <g class="n" id="ms" data-category="gudang">
-              <rect x="975" y="298" width="150" height="64" rx="10" ry="10"/>
+              <rect x="975" y="298" width="150" height="64" rx="10" ry="10" />
               <text x="1050" y="331">MUTASI STOK</text>
             </g>
 
             <!-- Workshop / Lab -->
             <g class="n" id="dt" data-category="workshop">
-              <rect x="1175" y="298" width="150" height="64" rx="10" ry="10"/>
+              <rect x="1175" y="298" width="150" height="64" rx="10" ry="10" />
               <text x="1250" y="331">DITERIMA</text>
             </g>
             <g class="n" id="bf" data-category="workshop">
-              <rect x="1175" y="433" width="150" height="64" rx="10" ry="10"/>
+              <rect x="1175" y="433" width="150" height="64" rx="10" ry="10" />
               <text x="1250" y="466">BUAT FASET</text>
             </g>
             <g class="n" id="qa" data-category="workshop">
-              <rect x="955" y="433" width="150" height="64" rx="10" ry="10"/>
+              <rect x="955" y="433" width="150" height="64" rx="10" ry="10" />
               <text x="1030" y="466">BUAT QA</text>
             </g>
             <g class="n" id="ll" data-category="workshop">
-              <polygon points="800,407 868,465 800,523 732,465"/>
+              <polygon points="800,407 868,465 800,523 732,465" />
               <text x="800" y="466">LULUS ?</text>
             </g>
             <g class="n" id="gr" data-category="workshop">
-              <rect x="955" y="620" width="150" height="50" rx="10" ry="10"/>
+              <rect x="955" y="620" width="150" height="50" rx="10" ry="10" />
               <text x="1030" y="640">GUDANG</text>
               <text x="1030" y="656">RUSAK</text>
             </g>
             <g class="n" id="uf" data-category="workshop">
-              <rect x="505" y="433" width="152" height="64" rx="10" ry="10"/>
+              <rect x="505" y="433" width="152" height="64" rx="10" ry="10" />
               <text x="581" y="448">UPDATE</text>
               <text x="581" y="466">FASET</text>
               <text x="581" y="484">BERHASIL</text>
@@ -844,35 +970,35 @@
 
             <!-- Notifikasi & Customer -->
             <g class="n" id="wa" data-category="finance">
-              <rect x="295" y="438" width="132" height="56" rx="10" ry="10"/>
+              <rect x="295" y="438" width="132" height="56" rx="10" ry="10" />
               <text x="361" y="458">FITUR WA</text>
               <text x="361" y="475">EMAIL</text>
             </g>
             <g class="n" id="cu" data-category="finance">
-              <rect x="95" y="437" width="110" height="56" rx="28" ry="28"/>
+              <rect x="95" y="437" width="110" height="56" rx="28" ry="28" />
               <text x="150" y="466">CUSTOMER</text>
             </g>
 
             <!-- Keuangan & Selesai -->
             <g class="n" id="py" data-category="finance">
-              <rect x="505" y="569" width="152" height="50" rx="10" ry="10"/>
+              <rect x="505" y="569" width="152" height="50" rx="10" ry="10" />
               <text x="581" y="595">PEMBAYARAN</text>
             </g>
             <g class="n" id="ku" data-category="finance">
-              <rect x="320" y="569" width="122" height="50" rx="10" ry="10"/>
+              <rect x="320" y="569" width="122" height="50" rx="10" ry="10" />
               <text x="381" y="586">KUITANSI</text>
               <text x="381" y="603">PEMBAYARAN</text>
             </g>
             <g class="n" id="ln" data-category="finance">
-              <polygon points="580,670 642,725 580,780 518,725"/>
+              <polygon points="580,670 642,725 580,780 518,725" />
               <text x="580" y="726">LUNAS ?</text>
             </g>
             <g class="n" id="ab" data-category="frontoffice">
-              <rect x="505" y="839" width="152" height="50" rx="10" ry="10"/>
+              <rect x="505" y="839" width="152" height="50" rx="10" ry="10" />
               <text x="581" y="865">AMBIL BARANG</text>
             </g>
             <g class="n" id="is" data-category="finance">
-              <rect x="320" y="839" width="122" height="50" rx="10" ry="10"/>
+              <rect x="320" y="839" width="122" height="50" rx="10" ry="10" />
               <text x="381" y="856">INVOICE</text>
               <text x="381" y="873">STRUK</text>
             </g>
@@ -883,13 +1009,25 @@
       <!-- Floating Zoom Controls -->
       <div class="floating-controls">
         <button class="floating-btn" id="btn-zoom-in" title="Perbesar (Zoom In)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <line x1="11" y1="8" x2="11" y2="14"></line>
+            <line x1="8" y1="11" x2="14" y2="11"></line>
+          </svg>
         </button>
         <button class="floating-btn" id="btn-zoom-out" title="Perkecil (Zoom Out)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            <line x1="8" y1="11" x2="14" y2="11"></line>
+          </svg>
         </button>
         <button class="floating-btn" id="btn-zoom-reset" title="Reset Tampilan">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+            <path d="M3 3v5h5"></path>
+          </svg>
         </button>
       </div>
     </div>
@@ -906,8 +1044,10 @@
         <div class="legend-grid">
           <div class="legend-item"><span class="legend-line yes"></span><span>Berhasil / Jalur Utama</span></div>
           <div class="legend-item"><span class="legend-line no dash"></span><span>Gagal / Pengulangan Faset</span></div>
-          <div class="legend-item"><span class="legend-line wait dash"></span><span>Menunggu (Stok Kosong / Belum Lunas)</span></div>
-          <div class="legend-item"><span class="legend-line notif"></span><span>Notifikasi Pelanggan (WA & Email)</span></div>
+          <div class="legend-item"><span class="legend-line wait dash"></span><span>Menunggu (Stok Kosong / Belum
+              Lunas)</span></div>
+          <div class="legend-item"><span class="legend-line notif"></span><span>Notifikasi Pelanggan (WA & Email)</span>
+          </div>
           <div class="legend-item"><span class="legend-line"></span><span>Alur Standar Toko</span></div>
         </div>
       </div>
@@ -1140,7 +1280,7 @@
         const targetData = STEP_DATA[targetId] || [targetId, ""];
         const labelText = (edge.dataset.l || "").split(" ").filter(Boolean)
           .map(id => document.getElementById(id)?.textContent || "").join(" / ");
-        
+
         return `
           <div class="conn-item" data-jump="${targetId}">
             <div class="conn-item-left">
@@ -1152,8 +1292,8 @@
         `;
       };
 
-      const validEdges = edges.filter(e => 
-        (e.dataset.f === stepId || e.dataset.t === stepId) && 
+      const validEdges = edges.filter(e =>
+        (e.dataset.f === stepId || e.dataset.t === stepId) &&
         !("fromOnly" in e.dataset && e.dataset.f !== stepId)
       );
 
@@ -1306,4 +1446,5 @@
     clearFocus();
   </script>
 </body>
+
 </html>
