@@ -1,0 +1,230 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alur Kerja Lensiro</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#FFFFFF; --surface:#FFFFFF; --ink:#000000; --muted:#6B6B6B;
+  --grey:#BDBDBD; --grey-text:#9A9A9A; --grey-fill:#FFFFFF;
+  --accent:#000000; --accent-soft:#F2F2F2;
+  --good:#1E8E4E; --bad:#D0342C; --wait:#E08A00; --notif:#2F6FDB; --flow:#000000;
+  --tip-bg:#000000; --tip-ink:#FFFFFF;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
+}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body);padding:0}
+.wrap{height:100%;display:flex;flex-direction:column}
+.layout{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 300px}
+@media (max-width:900px){.wrap{height:auto}.layout{grid-template-columns:1fr}.board svg{height:auto}}
+header{padding:14px 20px 8px;display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 24px}
+h1{font:700 24px/1.1 var(--display);margin:0}
+h1 small{display:block;font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.hint{color:var(--muted);font-size:14px;margin:0}
+.board{position:relative;background:var(--surface);overflow:auto;min-height:0}
+.board svg{display:block;min-width:720px;width:100%;height:100%}
+
+/* Kotak: default abu-abu */
+.n{cursor:pointer;outline:none}
+.n rect,.n ellipse,.n polygon{fill:var(--grey-fill);stroke:var(--grey);stroke-width:1.4;transition:fill .15s,stroke .15s}
+.n text{fill:var(--grey-text);font:600 12.5px var(--body);text-anchor:middle;dominant-baseline:middle;letter-spacing:.02em;pointer-events:none;transition:fill .15s}
+
+/* Garis berwarna sesuai arti */
+.e{fill:none;stroke:var(--grey);stroke-width:1.8;marker-end:url(#a-grey);transition:opacity .15s,stroke-width .15s,stroke .15s}
+.e.on{stroke:var(--c);marker-end:url(#a-flow)}
+.e,.lbl{--c:var(--flow)}
+.yes{--c:var(--good)} .no{--c:var(--bad)} .wait{--c:var(--wait)} .notif{--c:var(--notif)}
+.e.on.yes{marker-end:url(#a-yes)} .e.on.no{marker-end:url(#a-no)} .e.on.wait{marker-end:url(#a-wait)} .e.on.notif{marker-end:url(#a-notif)}
+.e.on.no,.e.on.wait{stroke-dasharray:6 4}
+.lbl{fill:var(--grey-text);font:700 11.5px var(--body);letter-spacing:.06em;transition:opacity .15s,fill .15s}
+.lbl.on{fill:var(--c)}
+
+/* Aktif (hover / klik) */
+.n.on rect,.n.on ellipse,.n.on polygon{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2}
+.n.on text{fill:var(--ink)}
+.n.near rect,.n.near ellipse,.n.near polygon{stroke:var(--accent)}
+.n.near text{fill:var(--ink)}
+.n:focus-visible rect,.n:focus-visible ellipse,.n:focus-visible polygon{stroke:var(--accent);stroke-width:2.5}
+.focus .e:not(.on),.focus .lbl:not(.on){opacity:.18}
+.e.on{stroke-width:3}
+
+.side{overflow:auto;border-left:1px solid #E0E0E0;padding:18px;display:flex;flex-direction:column;gap:18px}
+.side h2{font:700 20px/1.2 var(--display);margin:0}
+.side .eyebrow{font:600 11px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+.side p{margin:0}
+.desc{font-size:15px;line-height:1.55}
+.empty{color:var(--muted)}
+.conn{display:flex;flex-direction:column;gap:6px;margin-top:4px}
+.conn h3{font:600 11px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:10px 0 2px}
+.conn div{display:flex;align-items:center;gap:8px;font-size:14px}
+.conn i,.legend i{flex:none;display:inline-block;width:22px;height:0;border-top:3px solid var(--c)}
+.conn i.dash,.legend i.dash{border-top-style:dashed}
+.conn em{font-style:normal;font:700 11px var(--body);letter-spacing:.06em;color:var(--c)}
+.legend{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted);border-top:1px solid #E0E0E0;padding-top:14px}
+.legend span{display:flex;align-items:center;gap:8px}
+@media (prefers-reduced-motion:reduce){.n *,.e,.lbl{transition:none}}
+</style>
+
+<div class="wrap">
+<header>
+  <h1><small>Optik Lensiro</small>Alur Kerja Pesanan</h1>
+  <p class="hint">Arahkan kursor atau klik salah satu langkah untuk melihat penjelasan dan alurnya.</p>
+</header>
+
+<div class="layout">
+<div class="board" id="board">
+<svg viewBox="80 10 1265 895" role="img" aria-label="Diagram alur kerja pesanan Optik Lensiro">
+  <defs>
+    <marker id="a-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--grey)"/></marker>
+    <marker id="a-flow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--flow)"/></marker>
+    <marker id="a-yes" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--good)"/></marker>
+    <marker id="a-no" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--bad)"/></marker>
+    <marker id="a-wait" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--wait)"/></marker>
+    <marker id="a-notif" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--notif)"/></marker>
+  </defs>
+
+  <g id="edges">
+    <path class="e" data-f="kasir" data-t="po" d="M380,74 V106"/>
+    <path class="e" data-f="po" data-t="ps" d="M380,152 V199"/>
+    <path class="e" data-f="ps" data-t="ag" d="M380,249 V296"/>
+    <path class="e" data-f="ag" data-t="ap" d="M432,330 H488"/>
+    <path class="e" data-f="ap" data-t="sa" d="M630,330 H718"/>
+    <path class="e wait" data-f="sa" data-t="pb" data-l="l-kosong" d="M790,272 V222"/>
+    <path class="e" data-f="pb" data-t="ms" data-l="l-dikirim" d="M870,190 H1050 V298"/>
+    <path class="e yes" data-f="sa" data-t="ms" data-l="l-ada" d="M860,330 H973"/>
+    <path class="e" data-f="ms" data-t="dt" d="M1125,330 H1173"/>
+    <path class="e" data-f="dt" data-t="bf" d="M1250,360 V433"/>
+    <path class="e" data-f="bf" data-t="qa" d="M1175,465 H1107"/>
+    <path class="e" data-f="qa" data-t="ll" d="M955,465 H870"/>
+    <path class="e yes" data-f="ll" data-t="uf" data-l="l-lulus" d="M732,465 H657"/>
+    <path class="e no" data-f="ll" data-t="bf" data-from-only data-l="l-gagal l-ulangi" d="M800,523 V565 H1250 V497"/>
+    <path class="e notif" data-f="uf" data-t="wa" data-l="l-kirim l-notif" d="M505,465 H427"/>
+    <path class="e notif" data-f="wa" data-t="cu" d="M295,465 H204"/>
+    <path class="e" data-f="uf" data-t="py" d="M580,497 V569"/>
+    <path class="e" data-f="py" data-t="ku" d="M505,595 H442"/>
+    <path class="e notif" data-f="ku" data-t="wa" d="M380,571 V494"/>
+    <path class="e" data-f="py" data-t="ln" d="M580,619 V668"/>
+    <path class="e wait" data-f="ln" data-t="py" data-from-only data-l="l-belum" d="M642,725 H710 V595 H657"/>
+    <path class="e yes" data-f="ln" data-t="ab" data-l="l-lunas" d="M580,780 V839"/>
+    <path class="e" data-f="ab" data-t="is" d="M510,865 H442"/>
+    <path class="e notif" data-f="is" data-t="wa" d="M320,865 C240,865 235,570 322,495"/>
+  </g>
+
+  <g>
+    <text class="lbl wait" id="l-kosong" x="800" y="250">KOSONG</text>
+    <text class="lbl" id="l-dikirim" x="960" y="178" text-anchor="middle">DIKIRIM</text>
+    <text class="lbl yes" id="l-ada" x="916" y="352" text-anchor="middle">ADA</text>
+    <text class="lbl yes" id="l-lulus" x="695" y="453" text-anchor="middle">LULUS</text>
+    <text class="lbl no" id="l-gagal" x="812" y="552">GAGAL</text>
+    <text class="lbl no" id="l-ulangi" x="1262" y="530">ULANGI</text>
+    <text class="lbl notif" id="l-kirim" x="466" y="436" text-anchor="middle">KIRIM</text>
+    <text class="lbl notif" id="l-notif" x="466" y="452" text-anchor="middle">NOTIF</text>
+    <text class="lbl wait" id="l-belum" x="672" y="714" text-anchor="middle">BELUM</text>
+    <text class="lbl yes" id="l-lunas" x="592" y="814">LUNAS</text>
+  </g>
+
+  <g id="nodes">
+    <g class="n" id="kasir"><ellipse cx="380" cy="50" rx="45" ry="24"/><text x="380" y="50">KASIR</text></g>
+    <g class="n" id="po"><rect x="300" y="108" width="160" height="44"/><text x="380" y="130">PENJUALAN ORDER</text></g>
+    <g class="n" id="ps"><rect x="300" y="201" width="160" height="48"/><text x="380" y="225">PERMINTAAN STOK</text></g>
+    <g class="n" id="ag"><ellipse cx="380" cy="330" rx="52" ry="32"/><text x="380" y="322">ADMIN</text><text x="380" y="339">GUDANG</text></g>
+    <g class="n" id="ap"><polygon points="560,272 630,330 560,388 490,330"/><text x="560" y="330">APPROVED</text></g>
+    <g class="n" id="sa"><polygon points="790,272 860,330 790,388 720,330"/><text x="790" y="322">STOK</text><text x="790" y="339">ADA ?</text></g>
+    <g class="n" id="pb"><rect x="710" y="160" width="160" height="60"/><text x="790" y="190">PEMBELIAN ORDER</text></g>
+    <g class="n" id="ms"><rect x="975" y="300" width="150" height="60"/><text x="1050" y="330">MUTASI STOK</text></g>
+    <g class="n" id="dt"><rect x="1175" y="300" width="150" height="60"/><text x="1250" y="330">DITERIMA</text></g>
+    <g class="n" id="bf"><rect x="1175" y="435" width="150" height="60"/><text x="1250" y="465">BUAT FASET</text></g>
+    <g class="n" id="qa"><rect x="955" y="435" width="150" height="60"/><text x="1030" y="465">BUAT QA</text></g>
+    <g class="n" id="ll"><polygon points="800,407 868,465 800,523 732,465"/><text x="800" y="465">LULUS ?</text></g>
+    <g class="n" id="uf"><rect x="505" y="433" width="150" height="64"/><text x="580" y="448">UPDATE</text><text x="580" y="465">FASET</text><text x="580" y="482">BERHASIL</text></g>
+    <g class="n" id="wa"><rect x="295" y="438" width="130" height="54"/><text x="360" y="457">FITUR WA</text><text x="360" y="474">EMAIL</text></g>
+    <g class="n" id="cu"><ellipse cx="150" cy="465" rx="52" ry="30"/><text x="150" y="465">CUSTOMER</text></g>
+    <g class="n" id="py"><rect x="505" y="571" width="150" height="48"/><text x="580" y="595">PEMBAYARAN</text></g>
+    <g class="n" id="ku"><rect x="320" y="571" width="120" height="48"/><text x="380" y="587">KUITANSI</text><text x="380" y="604">PEMBAYARAN</text></g>
+    <g class="n" id="ln"><polygon points="580,670 642,725 580,780 518,725"/><text x="580" y="725">LUNAS ?</text></g>
+    <g class="n" id="ab"><rect x="510" y="841" width="140" height="48"/><text x="580" y="865">AMBIL BARANG</text></g>
+    <g class="n" id="is"><rect x="320" y="841" width="120" height="48"/><text x="380" y="857">INVOICE</text><text x="380" y="874">STRUK</text></g>
+  </g>
+</svg>
+</div>
+<aside class="side" aria-live="polite">
+  <div id="info"></div>
+  <div class="legend">
+    <span><i class="yes"></i>Berhasil / lanjut</span>
+    <span><i class="no dash"></i>Gagal / ulangi</span>
+    <span><i class="wait dash"></i>Menunggu (stok kosong, belum lunas)</span>
+    <span><i class="notif"></i>Notifikasi ke customer</span>
+    <span><i></i>Alur biasa</span>
+  </div>
+</aside>
+</div>
+</div>
+
+<script>
+const INFO={
+  kasir:["Kasir","Kasir menerima pesanan kacamata dari customer."],
+  po:["Penjualan Order","Kasir mencatat order: data customer, resep, lensa, dan frame."],
+  ps:["Permintaan Stok","Order membuat permintaan stok lensa ke gudang."],
+  ag:["Admin Gudang","Admin gudang memeriksa permintaan stok yang masuk."],
+  ap:["Approved","Admin gudang menyetujui permintaan stok."],
+  sa:["Stok Ada?","Ada: lanjut ke mutasi stok. Kosong: buat pembelian order ke supplier."],
+  pb:["Pembelian Order","Stok kosong, gudang memesan ke supplier. Setelah barang dikirim, lanjut ke mutasi stok."],
+  ms:["Mutasi Stok","Lensa dipindahkan dari gudang ke toko."],
+  dt:["Diterima","Toko mengonfirmasi lensa sudah diterima."],
+  bf:["Buat Faset","Lensa dipotong dan dipasang ke frame."],
+  qa:["Buat QA","Hasil faset diperiksa: kekuatan lensa, axis, PD, dan kerapian."],
+  ll:["Lulus?","Lulus: faset berhasil. Gagal: ulangi buat faset."],
+  uf:["Update Faset Berhasil","Status faset diperbarui, lalu customer diberi notifikasi dan diarahkan ke pembayaran."],
+  wa:["Fitur WA / Email","Notifikasi, kuitansi, dan invoice dikirim ke customer lewat WhatsApp dan email."],
+  cu:["Customer","Customer menerima semua notifikasi dari toko."],
+  py:["Pembayaran","Customer melakukan pembayaran."],
+  ku:["Kuitansi Pembayaran","Setiap pembayaran menghasilkan kuitansi yang dikirim ke customer."],
+  ln:["Lunas?","Belum lunas: kembali ke pembayaran. Lunas: barang bisa diambil."],
+  ab:["Ambil Barang","Customer mengambil kacamata di toko."],
+  is:["Invoice / Struk","Invoice atau struk dibuat dan dikirim ke customer."]
+};
+const board=document.getElementById("board"),info=document.getElementById("info");
+const DEFAULT='<p class="eyebrow">Penjelasan</p><h2>Pilih langkah</h2><p class="desc empty" style="margin-top:6px">Arahkan kursor atau klik salah satu kotak di diagram. Penjelasan dan alurnya muncul di sini.</p>';
+const nodes=[...document.querySelectorAll(".n")],edges=[...document.querySelectorAll(".e")];
+let pinned=null;
+
+function clear(){
+  document.querySelectorAll(".on,.near").forEach(el=>el.classList.remove("on","near"));
+  board.classList.remove("focus");
+  info.innerHTML=DEFAULT;
+}
+function show(n){
+  clear();
+  n.classList.add("on");
+  board.classList.add("focus");
+  edges.forEach(e=>{
+    if(e.dataset.f!==n.id&&e.dataset.t!==n.id)return;
+    if("fromOnly" in e.dataset&&e.dataset.f!==n.id)return;
+    e.classList.add("on");
+    (e.dataset.l||"").split(" ").filter(Boolean).forEach(id=>document.getElementById(id).classList.add("on"));
+    const other=e.dataset.f===n.id?e.dataset.t:e.dataset.f;
+    if(other!==n.id)document.getElementById(other).classList.add("near");
+  });
+  const [t,d]=INFO[n.id];
+  const kind=e=>["yes","no","wait","notif"].find(k=>e.classList.contains(k))||"";
+  const row=(e,other)=>{const k=kind(e),lbl=(e.dataset.l||"").split(" ").filter(Boolean).map(id=>document.getElementById(id).textContent).join(" / ");
+    return `<div class="${k}"><i class="${k==="no"||k==="wait"?"dash":""}"></i>${INFO[other][0]}${lbl?` <em>${lbl}</em>`:""}</div>`;};
+  const vis=edges.filter(e=>(e.dataset.f===n.id||e.dataset.t===n.id)&&!("fromOnly" in e.dataset&&e.dataset.f!==n.id));
+  const inn=vis.filter(e=>e.dataset.t===n.id).map(e=>row(e,e.dataset.f)).join("");
+  const out=vis.filter(e=>e.dataset.f===n.id).map(e=>row(e,e.dataset.t)).join("");
+  info.innerHTML=`<p class="eyebrow">Langkah</p><h2>${t}</h2><p class="desc" style="margin-top:6px">${d}</p>
+    <div class="conn">${inn?`<h3>Dari</h3>${inn}`:""}${out?`<h3>Lanjut ke</h3>${out}`:""}</div>`;
+}
+nodes.forEach(n=>{
+  n.setAttribute("tabindex","0");
+  n.setAttribute("role","button");
+  n.setAttribute("aria-label",INFO[n.id][0]+". "+INFO[n.id][1]);
+  n.addEventListener("mouseenter",()=>show(n));
+  n.addEventListener("mouseleave",()=>pinned?show(pinned):clear());
+  n.addEventListener("focus",()=>show(n));
+  n.addEventListener("blur",()=>pinned?show(pinned):clear());
+  n.addEventListener("click",ev=>{ev.stopPropagation();pinned=pinned===n?null:n;pinned?show(n):clear();});
+});
+document.addEventListener("click",()=>{pinned=null;clear();});
+clear();
+</script>
