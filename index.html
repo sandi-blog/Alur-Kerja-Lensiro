@@ -46,7 +46,33 @@ h1 small{display:block;font:600 12px var(--body);letter-spacing:.08em;text-trans
 .n.near text{fill:var(--ink)}
 .n:focus-visible rect,.n:focus-visible ellipse,.n:focus-visible polygon{stroke:var(--accent);stroke-width:2.5}
 .focus .e:not(.on),.focus .lbl:not(.on){opacity:.18}
-.e.on{stroke-width:3}
+.e.on{
+  stroke-width:3;
+  stroke-dasharray:8 6;
+  animation: flowArrow 0.6s linear infinite;
+}
+.e.on.no,.e.on.wait{
+  stroke-dasharray:6 4;
+  animation: flowArrowDash 0.5s linear infinite;
+}
+
+@keyframes flowArrow {
+  from {
+    stroke-dashoffset: 28;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes flowArrowDash {
+  from {
+    stroke-dashoffset: 20;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
 
 .side{overflow:auto;border-left:1px solid #E0E0E0;padding:18px;display:flex;flex-direction:column;gap:18px}
 .side h2{font:700 20px/1.2 var(--display);margin:0}
