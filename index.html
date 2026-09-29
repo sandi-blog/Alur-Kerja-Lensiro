@@ -705,7 +705,7 @@
       <div class="canvas-grid-bg"></div>
 
       <div class="board-svg-wrapper" id="svg-wrapper">
-        <svg id="board-svg" viewBox="80 10 1265 895" role="img" aria-label="Diagram alur kerja pesanan Optik Lensiro">
+        <svg id="board-svg" viewBox="70 10 1300 895" role="img" aria-label="Diagram alur kerja pesanan Optik Lensiro">
           <defs>
             <!-- Arrow Markers -->
             <marker id="a-grey" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto">
@@ -731,7 +731,8 @@
           <!-- Flow Edges (Paths) -->
           <g id="edges">
             <path class="e" data-f="kasir" data-t="po" d="M380,74 V106"/>
-            <path class="e" data-f="po" data-t="ps" d="M380,152 V199"/>
+            <path class="e" data-f="po" data-t="ps" data-l="l-minta" d="M380,152 V199"/>
+            <path class="e yes" data-f="po" data-t="bf" data-l="l-ready" d="M465,129 H1345 V465 H1325"/>
             <path class="e" data-f="ps" data-t="ag" d="M380,249 V296"/>
             <path class="e" data-f="ag" data-t="ap" d="M432,330 H488"/>
             <path class="e" data-f="ap" data-t="sa" d="M630,330 H718"/>
@@ -759,6 +760,8 @@
 
           <!-- Branch Condition Labels -->
           <g id="labels">
+            <text class="lbl yes" id="l-ready" x="700" y="118" text-anchor="middle">STOK READY</text>
+            <text class="lbl wait" id="l-minta" x="388" y="180">MINTA GUDANG</text>
             <text class="lbl wait" id="l-kosong" x="800" y="250">KOSONG</text>
             <text class="lbl" id="l-dikirim" x="960" y="178" text-anchor="middle">DIKIRIM</text>
             <text class="lbl yes" id="l-ada" x="916" y="352" text-anchor="middle">ADA</text>
@@ -917,149 +920,149 @@
     const STEP_DATA = {
       kasir: {
         title: "Kasir",
-        role: "Front Office / Kasir",
+        role: "Kasir / Front Office",
         cat: "Order & Penjualan",
-        desc: "Kasir menerima pesanan kacamata langsung dari pelanggan, mendata kebutuhan frame & lensa, serta memulai siklus transaksi.",
+        desc: "Kasir menerima pesanan kacamata dari pelanggan dan memulai pembuatan nota penjualan baru. Menu Lensiro: Penjualan › Daftar → Buat Penjualan.",
         badge: "Langkah 01"
       },
       po: {
         title: "Penjualan Order",
-        role: "Sistem Kasir",
+        role: "Kasir",
         cat: "Order & Penjualan",
-        desc: "Sistem mencatat data lengkap pesanan: identitas customer, resep ukuran kacamata (SPH, CYL, AXIS, PD), jenis lensa, dan frame yang dipilih.",
+        desc: "Kasir membuat nota penjualan. Jika STOK READY di toko, pesanan langsung ke Buat Faset. Jika stok belum ready/perlu gudang, baru dibuat Permintaan Stok. Menu: Penjualan › Daftar → Buat Penjualan.",
         badge: "Langkah 02"
       },
       ps: {
         title: "Permintaan Stok",
-        role: "Sistem Logistik",
+        role: "Kasir / Sistem",
         cat: "Logistik & Gudang",
-        desc: "Order yang dibuat secara otomatis menghasilkan permintaan stok lensa ke gudang pusat/cabang untuk ketersediaan barang.",
+        desc: "Dibuat jika stok lensa belum ready di toko/workshop sehingga perlu pasokan dari gudang. Menu: Gudang › Permintaan Stok → Buat Permintaan Stok.",
         badge: "Langkah 03"
       },
       ag: {
         title: "Admin Gudang",
-        role: "Logistik / Warehouse",
+        role: "Admin Gudang",
         cat: "Logistik & Gudang",
-        desc: "Admin gudang memvalidasi dan memeriksa daftar permintaan stok lensa yang masuk dari kasir toko.",
+        desc: "Admin gudang menerima dan memeriksa rincian permintaan stok lensa yang masuk dari kasir toko sebelum disetujui.",
         badge: "Langkah 04"
       },
       ap: {
         title: "Approved",
         role: "Admin Gudang",
         cat: "Persetujuan",
-        desc: "Admin gudang menyetujui permintaan stok lensa setelah rincian spesifikasi sesuai dengan order.",
+        desc: "Admin gudang menyetujui permintaan stok. Menu Lensiro: Gudang › Permintaan Stok → Approve / Operasi Permintaan Stok. Jika tidak di-approve, proses berhenti di sini.",
         badge: "Langkah 05"
       },
       sa: {
         title: "Stok Ada?",
-        role: "Sistem Gudang",
+        role: "Admin Gudang",
         cat: "Keputusan (Decision)",
-        desc: "Pengecekan ketersediaan fisik stok: Jika ADA maka lanjut ke Mutasi Stok. Jika KOSONG maka diteruskan ke Pembelian Order (Supplier).",
+        desc: "Admin gudang mengecek ketersediaan fisik lensa di menu Gudang › Stok. Jika ADA lanjut ke Mutasi Stok. Jika KOSONG dibuat Pembelian Order ke supplier.",
         badge: "Pengecekan"
       },
       pb: {
         title: "Pembelian Order",
-        role: "Purchasing & Supplier",
+        role: "Admin Gudang / Purchasing",
         cat: "Pengadaan",
-        desc: "Stok kosong memicu PO ke supplier lensa. Setelah lensa dikirim oleh vendor ke gudang, alur dilanjutkan ke mutasi stok.",
+        desc: "Jika stok kosong, dibuat pesanan ke supplier di menu Pembelian › Order → Buat Pembelian Order. Setelah barang dikirim supplier, lanjut ke Mutasi Stok.",
         badge: "Pengadaan"
       },
       ms: {
         title: "Mutasi Stok",
         role: "Admin Gudang",
         cat: "Distribusi",
-        desc: "Lensa yang tersedia dipindahkan (mutasi) secara administratif dan fisik dari gudang menuju ke lab/toko.",
+        desc: "Lensa dipindahkan ke cabang/lokasi lab yang membutuhkan lewat menu Gudang › Mutasi Stok → Buat Stok Mutasi.",
         badge: "Distribusi"
       },
       dt: {
         title: "Diterima",
-        role: "Teknisi Lab / Toko",
-        cat: "Workshop / Lab",
-        desc: "Toko dan teknisi lab mengonfirmasi bahwa lensa fisik sudah sampai dan siap untuk diproses faset.",
+        role: "Admin Gudang / Teknisi",
+        cat: "Penerimaan",
+        desc: "Konfirmasi barang/lensa sudah diterima di lokasi faset. Catatan penting: Order tidak bisa masuk pengerjaan faset sebelum berstatus Diterima.",
         badge: "Penerimaan"
       },
       bf: {
         title: "Buat Faset",
-        role: "Teknisi Lab (Edger)",
+        role: "Teknisi Lab / Admin",
         cat: "Workshop / Lab",
-        desc: "Lensa dipotong (edging/faset), diasah, dan dipasang secara presisi ke dalam frame kacamata pelanggan.",
+        desc: "Teknisi mengerjakan pemotongan lensa dan pemasangan frame sesuai resep (bisa langsung dari PO jika stok ready di toko, atau setelah lensa dari gudang berstatus Diterima). Menu: Penjualan › Daftar → Edit Faset.",
         badge: "Pengerjaan"
       },
       qa: {
         title: "Buat QA",
         role: "Quality Control",
         cat: "Pemeriksaan",
-        desc: "Pemeriksaan kualitas ketat terhadap kacamata: verifikasi kekuatan dioptri lensa, axis, pupil distance (PD), dan kerapian pemasangan frame.",
+        desc: "Hasil pengerjaan faset diperiksa menyeluruh oleh quality control (kekuatan dioptri, axis, PD, dan kerapian fisik) sebelum dinyatakan selesai.",
         badge: "Pemeriksaan"
       },
       ll: {
         title: "Lulus?",
         role: "QC Inspector",
         cat: "Keputusan (Decision)",
-        desc: "Evaluasi hasil QA: Jika LULUS, status faset diupdate. Jika GAGAL, barang yang rusak masuk ke Gudang Rusak dan pembuatan faset diulangi.",
+        desc: "Evaluasi QA: LULUS ➔ Update Faset Berhasil, lanjut notif & bayar. GAGAL ➔ 2 tindakan: ULANGI faset dari awal, dan MUTASI STOK barang rusak ke Gudang Rusak.",
         badge: "Evaluasi"
       },
       gr: {
         title: "Gudang Rusak",
-        role: "Logistik & Teknisi Lab",
+        role: "Admin Gudang / QC",
         cat: "Workshop / Lab",
-        desc: "Lensa atau frame yang gagal uji QA dilakukan mutasi stok ke Gudang Rusak untuk pencatatan barang rusak/waste atau klaim garansi vendor supplier.",
+        desc: "Sisa lensa/material yang gagal dipindahkan ke gudang rusak agar tidak tercampur stok bagus. Dicatat via Gudang › Mutasi Stok / Penghapusan Persediaan.",
         badge: "Barang Rusak"
       },
       uf: {
         title: "Update Faset Berhasil",
-        role: "Sistem Otomatis",
+        role: "Sistem / Teknisi",
         cat: "Pembaruan Status",
-        desc: "Sistem memperbarui status pesanan menjadi Selesai Dikerjakan, lalu memicu notifikasi WA/email ke customer serta mengarahkan ke pembayaran.",
+        desc: "Pengerjaan faset selesai dan sukses. Sistem secara paralel mengirimkan notifikasi kabar jadi ke customer (WA/Email) dan meneruskan ke tahap pembayaran.",
         badge: "Status Update"
       },
       wa: {
         title: "Fitur WA / Email",
-        role: "Messaging Gateway",
+        role: "Sistem Otomatis",
         cat: "Komunikasi",
-        desc: "Notifikasi otomatis, rincian kacamata selesai, kuitansi pembayaran, dan invoice dikirimkan ke kontak WhatsApp dan email pelanggan.",
+        desc: "Kirim kabar order jadi, kuitansi, dan struk via WA/Email. Menu Lensiro: Pelanggan › WhatsApp → Kirim Pesan & Email Pelanggan → Kirim Email Blast.",
         badge: "Gateway"
       },
       cu: {
         title: "Customer",
         role: "Pelanggan",
         cat: "Penerima Pesanan",
-        desc: "Customer menerima update pengerjaan pesanan secara realtime dan instruksi pengambilan kacamata.",
+        desc: "Customer menerima notifikasi order selesai, kuitansi pembayaran, serta invoice/struk digital resmi sebagai arsip bukti serah terima.",
         badge: "Pelanggan"
       },
       py: {
         title: "Pembayaran",
-        role: "Kasir / Finance",
+        role: "Kasir",
         cat: "Keuangan",
-        desc: "Customer melakukan proses penyelesaian pembayaran pesanan kacamata melalui berbagai metode pembayaran.",
+        desc: "Kasir mencatat pembayaran customer di menu Penjualan › Daftar → Edit Pembayaran Penjualan. Pembayaran dapat berupa DP, bertahap/cicilan, atau lunas.",
         badge: "Transaksi"
       },
       ku: {
         title: "Kuitansi Pembayaran",
-        role: "Sistem Keuangan",
+        role: "Sistem Kasir",
         cat: "Dokumen",
-        desc: "Tanda terima pembayaran (kuitansi) diterbitkan secara digital dan dikirimkan langsung ke WhatsApp customer.",
+        desc: "Setiap pembayaran menghasilkan Kuitansi Pembayaran yang langsung dikirimkan ke customer melalui WhatsApp dan Email.",
         badge: "Tanda Terima"
       },
       ln: {
         title: "Lunas?",
-        role: "Kasir / Sistem",
+        role: "Kasir",
         cat: "Keputusan (Decision)",
-        desc: "Pengecekan status pelunasan: Jika BELUM maka kembali menunggu pembayaran. Jika LUNAS maka kacamata siap diserahkan.",
+        desc: "Pengecekan pelunasan: BELUM ➔ kembali ke Pembayaran (customer boleh mencicil, barang belum boleh diambil). LUNAS ➔ lanjut ke Ambil Barang.",
         badge: "Verifikasi"
       },
       ab: {
         title: "Ambil Barang",
-        role: "Customer & Kasir",
+        role: "Kasir & Customer",
         cat: "Penyerahan",
-        desc: "Customer datang ke toko untuk fitting akhir dan mengambil kacamata yang sudah selesai dan lunas.",
-        badge: "Selesai"
+        desc: "Setelah lunas, status pengambilan diubah di Penjualan › Daftar → Edit Status Pengambilan. Customer melakukan fitting dan serah terima kacamata.",
+        badge: "Penyerahan"
       },
       is: {
         title: "Invoice / Struk",
-        role: "Sistem Kasir",
+        role: "Kasir",
         cat: "Dokumen Akhir",
-        desc: "Invoice final dan struk resmi diserahkan ke pelanggan sebagai bukti transaksi dan garansi kacamata.",
+        desc: "Invoice / Struk dicetak sebagai bukti serah terima resmi dan dikirim via WA/Email ke customer sebagai arsip. Selesai — order tertutup.",
         badge: "Faktur Akhir"
       }
     };
